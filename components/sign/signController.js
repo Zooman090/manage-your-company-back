@@ -3,37 +3,53 @@ const Sign = require('./signModel.js'),
   signIn = (req, res) => {
     sign
       .in(req)
-      .then(({ secret, role }) => {
-        console.log(secret, role);
-        const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
+      .then(({ secret, role, status }) => {
+        const ONE_YEAR = 365 * 24 * 60 * 60 * 1000,
+          maxAge = 3600000,
+          expires = new Date(new Date() + ONE_YEAR),
+          path = '/',
+          domain = 'localhost',
+          cookieOptions = { maxAge, expires, path, domain };
 
-        res.status(200);
-        res.cookie('secret', secret, { maxAge: 3600000, expires: new Date(new Date(0) + ONE_YEAR), path: '/', domain: 'localhost' });
-        res.send({ role }); //TODO: add real role
+        res.status(status);
+        res.cookie('secret', secret, cookieOptions);
+        res.send({ role });
         res.end();
       })
-      .catch(message => {
-        res.status(401);
-        res.send(message);
+      .catch(({ errorMessage, err, status }) => {
+        res.status(status).json({ errorMessage, err });
         res.end();
       });
   },
   signUp = (req, res) => {
     sign
       .up(req.body)
-      .then(() => {
-        res.status(200);
+      .then(({ secret, role, status }) => {
+        const ONE_YEAR = 365 * 24 * 60 * 60 * 1000,
+          maxAge = 3600000,
+          expires = new Date(new Date() + ONE_YEAR),
+          path = '/',
+          domain = 'localhost',
+          cookieOptions = { maxAge, expires, path, domain };
+
+        res.status(status);
+        res.cookie('secret', secret, cookieOptions);
+        res.send({ role });
         res.end();
       })
-      .catch(() => {
-        res.status(401);
+      .catch(({ status, errorMessage, err }) => {
+        res.status(status).json({ errorMessage, err });
         res.end();
       });
   },
   signOut = (req, res) => {
-    res.status(200);
-    res.cookie('secret', '', { path: '/', domain: 'localhost' });
-    res.send({ test: 'test' });
+    const path = '/',
+      domain = 'localhost',
+      status = 200,
+      cookieOptions = { path, domain };
+
+    res.status(status);
+    res.cookie('secret', '', cookieOptions);
     res.end();
   };
 

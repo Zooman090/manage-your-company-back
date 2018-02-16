@@ -57,8 +57,6 @@ class Staff {
 
           return;
         }
-
-        console.log(stuffs);
         
         resolve(stuffs);
       });

@@ -2,38 +2,43 @@ const Company = require('./companyModel.js'),
   company = new Company(),
   get = (req, res) => {
     company
-      .getCompany()
-      .then(companies => {
+      .getCompany(req)
+      .then(({ companies, status }) => {
         res.send(companies);
-        res.status(200);
+        res.status(status);
         res.end();
       })
-      .catch(() => {
-        res.status(404);
+      .catch(({ status, errorMessage, err }) => {
+        res.status(status).json({ errorMessage, err });
+        res.end();
       });
   },
   create = (req, res) => {
     company
       .create(req, req.body)
-      .then(companies => {
+      .then(({ status }) => {
         res.send(companies);
-        res.status(200);
+        res.status(status);
         res.end();
       })
-      .catch(({ status, errorMessage }) => {
-        res.status(status).json({ errorMessage });
+      .catch(({ status, errorMessage, err }) => {
+        res.status(status).json({ errorMessage, err });
         res.end();
       });
   },
   list = (req, res) => {
     company
-      .getCompany()
-      .then(companies => {
+      .getCompany(req)
+      .then(({ companies, status }) => {
         const companiesList = companies.map(({ name: title, company_id: value }) => {
           return { title, value };
         });
 
-        res.status(200).json(companiesList);
+        res.status(status).json(companiesList);
+      })
+      .catch(({ status, errorMessage, err }) => {
+        res.status(status).json({ errorMessage, err });
+        res.end();
       });
   };
 

@@ -25,11 +25,7 @@ class Company {
         return;
       }
 
-      console.log(user);
-
       const { role, user_id: userId } = user; 
-
-      console.log(role);
 
       if (role !== 'boss') {
         reject({ status: 403, errorMessage: 'you don\'t have access to create company' });
@@ -43,48 +39,43 @@ class Company {
 
       connect.query(sql, [ value ], err => {
         if (err) {
-          console.log(err);
-          reject({ status: 422, errorMessage: 'You sended wrong fields.' });
+          reject({ status: 422, errorMessage: 'You sended wrong fields.', err });
           throw err;
         }
 
-        resolve();
+        resolve({ status: 200 });
       });
     });
   }
 
-  getCompany(userID = 1) {
+  getCompany({ cookies = { secret: '' } }) {
+    const { secret } = cookies;
+
     return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM company WHERE main_user_id=1`;
+      
+      
+      let user = '';
+
+      try {
+        user = jwt.verify(secret, 'user_name_199');
+      } catch (error) {
+        reject({ status: 401, errorMessage: 'You have not signed in yet' });
+        return;
+      }
+
+      const sql = `SELECT * FROM company WHERE main_user_id=${user.user.user_id}`;
 
       connect.query(sql, (err, companies) => {
         if (err) {
-          reject(err);
+          reject({ status: 401, errorMessage: 'You have not signed in yet', err });
 
           return;
         }
         
-        resolve(companies);
+        resolve({ status: 200, companies });
       });
-    })
-      .then(companies => {
-        return new Promise((res, rej) => {
-          const sql = `SELECT * FROM staff  WHERE main_user_id=${ userID }`;
-
-          connect.query(sql, (err, staffs) => {
-            if (err) {
-              rej(err);
-
-              return;
-            }
-            
-            res({ staffs, companies });
-          });
-        });
-      })
-      .then(({ companies }) => {
-        return companies;
-      });
+    
+    });
   }
 }
 

@@ -3,28 +3,25 @@ const Staff = require('./staffModel.js'),
   create = (req, res) => {
     staff
       .create(req, req.body)
-      .then(companies => {
+      .then(({ companies, status }) => {
         res.send(companies);
-        res.status(200);
+        res.status(status);
         res.end();
       })
-      .catch(({ status, errorMessage }) => {
-        res.status(status).json({ errorMessage });
+      .catch(({ status, errorMessage, err = '' }) => {
+        res.status(status).json({ errorMessage, err });
         res.end();
       });
   },
   get = (req, res) => {
     staff
       .getStaff(req.params)
-      .then(staffs => {
-        res.json({ staffs });
-        res.status(200);
-        res.send();
+      .then(({ staffs, status }) => {
+        res.status(status).json({ staffs });
         res.end();
       })
-      .catch(({ status, errorMessage }) => {
-        res.status(status).json({ errorMessage });
-        res.send();
+      .catch(({ status, errorMessage, err = '' }) => {
+        res.status(status).json({ errorMessage, err });
         res.end();
       });
   };

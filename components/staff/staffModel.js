@@ -21,7 +21,7 @@ class Staff {
       try {
         user = jwt.verify(secret, 'user_name_199');
       } catch (error) {
-        reject({ status: 401, errorMessage: 'You have not signed in yet' });
+        reject({ status: 401, errorMessage: 'You have not signed in yet', err: error });
         return;
       }
 
@@ -37,11 +37,22 @@ class Staff {
 
       connect.query(sql, [ value ], err => {
         if (err) {
-          reject({ status: 403, errorMessage: err });
+          reject({ status: 403, errorMessage: 'User didn\'t save. Please check fields.' });
           throw err;
         }
 
-        resolve();
+        
+        const SQL = `update company set hasStaff = true where company_id = ${companyId} `;
+
+        connect.query(SQL, (error) => {
+          if (error) {
+            reject({ status: 503, errorMessage: '', err: error });
+  
+            return;
+          }
+          
+          resolve({ status: 200 });
+        });
       });
     });
   }
@@ -50,15 +61,14 @@ class Staff {
     return new Promise((resolve, reject) => {
       const sql = `SELECT * FROM staff WHERE company_id = ${companyID}`;
 
-      connect.query(sql, (err, stuffs) => {
+      connect.query(sql, (err, staffs) => {
         if (err) {
-          console.log(err);
-          reject(err);
+          reject({ status: 409, errorMessage: 'We can\'t get your staffs', err });
 
           return;
         }
-        
-        resolve(stuffs);
+
+        resolve({ status: 200, staffs });
       });
     });
   }

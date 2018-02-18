@@ -25,7 +25,8 @@ class Company {
         return;
       }
 
-      const { role, user_id: userId } = user; 
+      const { role, user_id: userId } = user.user,
+        sql = 'INSERT INTO company (name, type, address, main_user_id) VALUES ?';
 
       if (role !== 'boss') {
         reject({ status: 403, errorMessage: 'you don\'t have access to create company' });
@@ -33,16 +34,14 @@ class Company {
         return;
       }
 
-      const sql = 'INSERT INTO company (name, type, address, staff_id, main_user_id) VALUES ?';
-
-      let value = [ [ name, type, address, 1, userId ] ]; //TODO: make staff_id dynamic
+      let value = [ [ name, type, address, userId ] ]; //TODO: make staff_id dynamic
 
       connect.query(sql, [ value ], err => {
         if (err) {
           reject({ status: 422, errorMessage: 'You sended wrong fields.', err });
-          throw err;
-        }
 
+          return;
+        }
         resolve({ status: 200 });
       });
     });

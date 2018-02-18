@@ -63,7 +63,7 @@ class Sign {
 
       connect.query(sql, (err, user) => {
         if (err) {
-          reject({ status: 403, errorMessage: 'bad', err });//TODO: add nor
+          reject({ status: 403, errorMessage: 'You not registered yet.', err });//TODO: add nor
 
           return;
         }

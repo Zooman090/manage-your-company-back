@@ -34,7 +34,7 @@ class Company {
         return;
       }
 
-      let value = [ [ name, type, address, userId ] ]; //TODO: make staff_id dynamic
+      let value = [ [ name, type, address, userId ] ];
 
       connect.query(sql, [ value ], err => {
         if (err) {

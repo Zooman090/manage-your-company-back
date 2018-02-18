@@ -2,10 +2,11 @@
   "name": "back-end",
   "version": "0.0.3",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node-inspect & nodemon --inspect"
+    "start": "node index.js",
+    "dev": "node-inspect & nodemon --inspect"
   },
   "author": "Dmytro Paniontko",
   "license": "ISC",

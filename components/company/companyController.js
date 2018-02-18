@@ -17,7 +17,6 @@ const Company = require('./companyModel.js'),
     company
       .create(req, req.body)
       .then(({ status }) => {
-        res.send(companies);
         res.status(status);
         res.end();
       })

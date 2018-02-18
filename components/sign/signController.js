@@ -5,7 +5,7 @@ const Sign = require('./signModel.js'),
       .in(req)
       .then(({ secret, role, status }) => {
         const ONE_YEAR = 365 * 24 * 60 * 60 * 1000,
-          maxAge = 3600000,
+          maxAge = ONE_YEAR,
           expires = new Date(new Date() + ONE_YEAR),
           path = '/',
           domain = 'localhost',
@@ -26,7 +26,7 @@ const Sign = require('./signModel.js'),
       .up(req.body)
       .then(({ secret, role, status }) => {
         const ONE_YEAR = 365 * 24 * 60 * 60 * 1000,
-          maxAge = 3600000,
+          maxAge = ONE_YEAR,
           expires = new Date(new Date() + ONE_YEAR),
           path = '/',
           domain = 'localhost',
@@ -50,6 +50,7 @@ const Sign = require('./signModel.js'),
 
     res.status(status);
     res.cookie('secret', '', cookieOptions);
+    res.json({ message: 'Sign out' });
     res.end();
   };
 

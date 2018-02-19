@@ -11,7 +11,7 @@ const mysql = require('../helper/mysql.js'),
           reject({ err, status: 422, errorMessage: 'We have some trouble with creating user please check your fileds and sand again.' });          
         }
 
-        if (users[0]) {
+        if (users.length) {
           reject({ status: 406, errorMessage: 'This email has used.' });
         } else {
           resolve();

@@ -25,6 +25,7 @@ const Sign = require('./signModel.js'),
     sign
       .up(req.body)
       .then(({ secret, role, status }) => {
+        console.log(secret, role, status);
         const ONE_YEAR = 365 * 24 * 60 * 60 * 1000,
           maxAge = ONE_YEAR,
           expires = new Date(new Date() + ONE_YEAR),
@@ -38,6 +39,7 @@ const Sign = require('./signModel.js'),
         res.end();
       })
       .catch(({ status, errorMessage, err }) => {
+        console.log(status, errorMessage, err);
         res.status(status).json({ errorMessage, err });
         res.end();
       });

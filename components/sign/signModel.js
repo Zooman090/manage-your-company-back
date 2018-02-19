@@ -4,19 +4,17 @@ const mysql = require('../helper/mysql.js'),
   { secretKey } = require('../../config/key.js'),
   checkEmailOnUniqueness = email => {
     return new Promise((resolve, reject) => {
-      const SQL = `select * from user where email =${email}`;
+      const SQL = `select * from users where email="${email}"`;
 
       connect.query(SQL, (err, users) => {
         if (err) {
-          reject({ err, status: 422, errorMessage: 'We have some trouble with creating user please check your fileds and sand again.' });
-
-          return;
+          reject({ err, status: 422, errorMessage: 'We have some trouble with creating user please check your fileds and sand again.' });          
         }
 
-        if (users.length === 0) {
-          resolve();
-        } else {
+        if (users[0]) {
           reject({ status: 406, errorMessage: 'This email has used.' });
+        } else {
+          resolve();
         }
       });
     });
@@ -24,7 +22,7 @@ const mysql = require('../helper/mysql.js'),
   createUser = user => {
     return new Promise((resolve, reject) => {
       const sql = 'INSERT INTO users SET ?';
-      
+
       connect.query(sql, user, err => {
         if (err) {
           reject({ err, status: 422, errorMessage: 'We have some trouble with creating user please check your fileds and sand again.' });
@@ -36,14 +34,24 @@ const mysql = require('../helper/mysql.js'),
       });
     });
   },
-  makeUserSigned = user => {
+  makeUserSigned = ({ email }, role) => {
     return new Promise((resolve, reject) => {
-      jwt.sign({ user }, secretKey, { noTimestamp: true }, (error, secret) => {//TODO: implement user id
-        if (error) {
-          reject({ status: 403, err: error, errorMessage: 'You can\'t sign in. Please contact with techsupport.' });            
+      const sql = `select * from users where email="${email}"`;
+
+      connect.query(sql, (err, user) => {
+        if (err) {
+          reject({ err, status: 422, errorMessage: 'We have some trouble with creating user please check your fileds and sand again.' });          
         }
 
-        resolve({ secret, role, status: 200 });
+        jwt.sign({ user: user[0] }, secretKey, { noTimestamp: true }, (error, secret) => {//TODO: implement user id
+          if (error) {
+            reject({ status: 403, err: error, errorMessage: 'You can\'t sign in. Please contact with techsupport.' });
+  
+            return;
+          }
+  
+          resolve({ secret, role, status: 200 });
+        });
       });
     });
   };
@@ -63,7 +71,7 @@ class Sign {
 
       connect.query(sql, (err, user) => {
         if (err) {
-          reject({ status: 403, errorMessage: 'bad', err });//TODO: add nor
+          reject({ status: 403, errorMessage: 'You not registered yet.', err });//TODO: add nor
 
           return;
         }
@@ -77,7 +85,7 @@ class Sign {
             resolve({ secret, role: user[0].role, status: 200 });
           });
         } else {
-          reject({ status: '404', errorMessage: 'Incorrect email or password.', err: '' });
+          reject({ status: 404, errorMessage: 'Incorrect email or password.', err: '' });
         }
       });
     });
@@ -94,7 +102,7 @@ class Sign {
 
     return checkEmailOnUniqueness(email)
       .then(() => createUser(user))
-      .then(() => makeUserSigned(user));
+      .then(() => makeUserSigned(user, role));
   }
 }
 

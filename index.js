@@ -2,7 +2,12 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   app = express(),
   routers = require('./components/routers.js'),
-  cookieParser = require('cookie-parser');
+  cookieParser = require('cookie-parser'),
+  env = require('node-env-file');
+
+if (process.env.NODE_ENV.trim() === 'development') {
+  env(`${__dirname}/.env`);
+}
 
 require('./components/helper/mysql.js');
 

@@ -3,9 +3,8 @@ const Staff = require('./staffModel.js'),
   create = (req, res) => {
     staff
       .create(req, req.body)
-      .then(({ companies, status }) => {
-        res.send(companies);
-        res.status(status);
+      .then(({ message, status }) => {
+        res.status(status).json({ message });
         res.end();
       })
       .catch(({ status, errorMessage, err = '' }) => {

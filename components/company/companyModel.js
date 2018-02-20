@@ -34,6 +34,7 @@ class Company {
         return;
       }
 
+      
       let value = [ [ name, type, address, userId ] ];
 
       connect.query(sql, [ value ], err => {
@@ -42,7 +43,8 @@ class Company {
 
           return;
         }
-        resolve({ status: 200 });
+
+        resolve({ status: 200, message: 'Created' });
       });
     });
   }
@@ -51,8 +53,6 @@ class Company {
     const { secret } = cookies;
 
     return new Promise((resolve, reject) => {
-      
-      
       let user = '';
 
       try {

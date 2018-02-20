@@ -51,7 +51,7 @@ class Staff {
             return;
           }
           
-          resolve({ status: 200 });
+          resolve({ status: 200, message: 'Created' });
         });
       });
     });

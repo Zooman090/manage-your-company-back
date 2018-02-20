@@ -16,8 +16,8 @@ const Company = require('./companyModel.js'),
   create = (req, res) => {
     company
       .create(req, req.body)
-      .then(({ status }) => {
-        res.status(status);
+      .then(({ status, message }) => {
+        res.status(status).json({ message });
         res.end();
       })
       .catch(({ status, errorMessage, err }) => {

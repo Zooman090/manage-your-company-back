@@ -1,4 +1,5 @@
-const Sign = require('./signModel.js'),
+const url = require('../../config/url.js'),
+  Sign = require('./signModel.js'),
   sign = new Sign(),
   signIn = (req, res) => {
     sign
@@ -8,8 +9,7 @@ const Sign = require('./signModel.js'),
           maxAge = ONE_YEAR,
           expires = new Date(new Date() + ONE_YEAR),
           path = '/',
-          domain = 'localhost',
-          cookieOptions = { maxAge, expires, path, domain };
+          cookieOptions = { maxAge, expires, path };
 
         res.status(status);
         res.cookie('secret', secret, cookieOptions);
@@ -25,13 +25,11 @@ const Sign = require('./signModel.js'),
     sign
       .up(req.body)
       .then(({ secret, role, status }) => {
-        console.log(secret, role, status);
         const ONE_YEAR = 365 * 24 * 60 * 60 * 1000,
           maxAge = ONE_YEAR,
           expires = new Date(new Date() + ONE_YEAR),
           path = '/',
-          domain = 'localhost',
-          cookieOptions = { maxAge, expires, path, domain };
+          cookieOptions = { maxAge, expires, path };
 
         res.status(status);
         res.cookie('secret', secret, cookieOptions);
@@ -39,16 +37,17 @@ const Sign = require('./signModel.js'),
         res.end();
       })
       .catch(({ status, errorMessage, err }) => {
-        console.log(status, errorMessage, err);
         res.status(status).json({ errorMessage, err });
         res.end();
       });
   },
   signOut = (req, res) => {
     const path = '/',
-      domain = 'localhost',
+      ONE_YEAR = 365 * 24 * 60 * 60 * 1000,
+      maxAge = ONE_YEAR,
+      expires = new Date(new Date() + ONE_YEAR),
       status = 200,
-      cookieOptions = { path, domain };
+      cookieOptions = { maxAge, expires, path };
 
     res.status(status);
     res.cookie('secret', '', cookieOptions);

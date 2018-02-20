@@ -3,7 +3,8 @@ const express = require('express'),
   app = express(),
   routers = require('./components/routers.js'),
   cookieParser = require('cookie-parser'),
-  env = require('node-env-file');
+  env = require('node-env-file'),
+  cors = require('cors');
 
 if (process.env.NODE_ENV.trim() === 'development') {
   env(`${__dirname}/.env`);
@@ -12,11 +13,17 @@ if (process.env.NODE_ENV.trim() === 'development') {
 require('./components/helper/mysql.js');
 
 app.use((req, res, next ) => {
-  res.header('Access-Control-Allow-Origin', process.env.front_url);
+  res.header('Access-Control-Expose-Headers', 'Access-Control-*, Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Origin, Access-Control-Allow-Credentials');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-*');
   next();
 });
+
+app.use(cors({
+  origin: process.env.front_url,
+  credentials: true
+}));
 
 app.use(bodyParser.urlencoded({
   extended: true
